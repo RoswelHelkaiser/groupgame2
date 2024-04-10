@@ -2,43 +2,47 @@
 #include "Scene.h"
 #include "SceneTitle.h"
 
-//タイトル背景画像ハンドル
-int BackImage = 0;
+int BackImage;	//タイトル背景画像ハンドル
 
-//タイトル初期化
-void InitTitle()
+int TitleImage;	//タイトル文字画像ハンドル
+
+int StartImage;	//スタート文字画像ハンドル
+
+void InitTitle()	//タイトル初期化
 {
-	//タイトル背景画像読み込み
-	BackImage = LoadGraph(BACK_PATH);
+	BackImage = LoadGraph(BACK_PATH);		//タイトル背景画像読み込み
 
-	//タイトルループへ移動
-	g_CurrentSceneID = SCENE_ID_LOOP_TITLE;
+	TitleImage = LoadGraph(TITLE_PATH);		//タイトル文字画像読み込み
+
+	StartImage = LoadGraph(START_PATH);		//スタート文字画像読み込み
+
+	g_CurrentSceneID = SCENE_ID_LOOP_TITLE;	//タイトルループへ移動
 }
 
-//タイトル通常処理
-void StepTitle()
+void StepTitle()	//タイトル通常処理
 {
-	//Enterキーが押されたら
-	if (IsKeyPush(KEY_INPUT_RETURN))
+	if (IsKeyPush(KEY_INPUT_RETURN))	//Enterキーが押されたら
 	{
-		//タイトル後処理へ移動
-		g_CurrentSceneID = SCENE_ID_FIN_TITLE;
+		g_CurrentSceneID = SCENE_ID_FIN_TITLE;	//タイトル後処理へ移動
 	}
 }
 
-//タイトル描画処理
-void DrawTitle()
+void DrawTitle()	//タイトル描画処理
 {
-	//タイトル背景画像描画
-	DrawGraph(0, 0, BackImage, true);
+	DrawGraph(0, 0, BackImage, true);	//タイトル背景画像描画
+
+	DrawRotaGraph(640, 220, 1.0f, 0.0f, TitleImage, true);	//タイトル文字画像描画
+
+	DrawRotaGraph(640, 550, 1.0f, 0.0f, StartImage, true);	//スタート文字画像描画
 }
 
-//タイトル後処理
-void FinTitle()
+void FinTitle()	//タイトル後処理
 {
-	//タイトル背景画像破棄
-	DeleteGraph(BackImage);
+	DeleteGraph(BackImage);		//タイトル背景画像破棄
 
-	//タイトルの後はプレイへ移動
-	g_CurrentSceneID = SCENE_ID_INIT_PLAY;
+	DeleteGraph(TitleImage);	//タイトル文字画像破棄
+
+	DeleteGraph(StartImage);	//スタート文字画像破棄
+
+	g_CurrentSceneID = SCENE_ID_INIT_PLAY;	//タイトルの後はプレイへ移動
 }

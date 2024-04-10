@@ -5,122 +5,108 @@
 #include "Scene.h"
 #include "ScenePlay.h"
 
-//フレームカウント用変数
-int FrameCount;
+Text text;	//文字クラスの宣言
 
-//ループカウント用変数
-int LoopCount;
+int FrameCount;	//フレームカウント用変数
 
-//制限時間
-int TimeLimit;
+int LoopCount;	//ループカウント用変数
 
-//制限時間を減らすフラグ
-bool isMinusTime;
+int TimeLimit;	//制限時間
 
-//クリアシーンに進むフラグ
-bool isNextClear;
+bool isMinusTime;	//制限時間を減らすフラグ
 
-//プレイシーン初期化
-void InitPlay()
+bool isNextClear;	//クリアシーンに進むフラグ
+
+void InitPlay()	//プレイシーン初期化
 {
-	//フレームカウントをリセット
-	FrameCount = 0;
+	text.InitText();	//文字の初期化
 
-	//ループカウントをリセット
-	LoopCount = 0;
+	FrameCount = 0;		//フレームカウントをリセット
 
-	//制限時間をリセット
-	TimeLimit = 30;
+	LoopCount = 0;		//ループカウントをリセット
 
-	//制限時間減少フラグを折る
-	isMinusTime = false;
+	TimeLimit = TIME_MAX_NUM;	//制限時間をリセット
 
-	//クリアシーンに進むフラグを折る
-	isNextClear = false;
+	isMinusTime = false;	//制限時間減少フラグを折る
 
-	//プレイシーンループへ
-	g_CurrentSceneID = SCENE_ID_LOOP_PLAY;
+	isNextClear = false;	//クリアシーンに進むフラグを折る
+
+	g_CurrentSceneID = SCENE_ID_LOOP_PLAY;	//プレイシーンループへ
 }
 
-//プレイシーン通常処理
-void StepPlay()
+void StepPlay()	//プレイシーン通常処理
 {
-	//制限時間が残っていたら
-	if (TimeLimit > 0)
-	{
-		//ループカウントが2より小さいなら
-		if (LoopCount < 2)
-		{
-			//フレームカウントを増やす
-			FrameCount++;
+	text.StepText();	//文字通常処理
 
-			//フレームカウントが一定の値を超えたら
-			if (FrameCount > FRAME_RATE / 2)
+	if (text.isStart)	//ゲームを進ませるフラグがtrueなら
+	{
+		if (TimeLimit > 0)	//制限時間が残っていたら
+		{
+			if (LoopCount < 1)	//ループカウントが1より小さいなら
+			{
+				FrameCount++;	//フレームカウントを増やす
+
+				if (FrameCount > FRAME_RATE)	//フレームカウントが一定の値を超えたら
+				{
+					LoopCount++;	//ループカウントを増やす
+					FrameCount = 0;	//フレームカウントをリセット
+				}
+			}
+
+			else if (LoopCount >= 1)	//ループカウントが1以上になったら
+			{
+				isMinusTime = true;		//制限時間減少フラグを立てる
+			}
+
+			if (isMinusTime)	//制限時間減少フラグがtrueなら
+			{
+				TimeLimit--;	//制限時間を減らす
+				LoopCount = 0;	//ループカウントをリセット
+				isMinusTime = false;	//制限時間減少フラグを折る
+			}
+		}
+	}	
+
+	if (TimeLimit <= 0)	//制限時間がなくなったら
+	{
+		text.HandleIndex = 2;	//「Finish!」にする
+		text.isDraw = true;		//描画フラグを立てる
+		text.Size = 3.0f;		//大きさを3倍にする
+
+		if (LoopCount < 2)	//ループカウントが2より小さいなら
+		{
+			FrameCount++;	//フレームカウントを増やす
+
+			if (FrameCount > FRAME_RATE)	//フレームカウントが一定の値を超えたら
 			{
 				LoopCount++;	//ループカウントを増やす
 				FrameCount = 0;	//フレームカウントをリセット
 			}
 		}
 
-		//ループカウントが2以上になったら
-		else if (LoopCount >= 2)
+		else if (LoopCount >= 2)	//ループカウントが2以上になったら
 		{
-			//制限時間減少フラグを立てる
-			isMinusTime = true;
+			isNextClear = true;		//クリアシーンに進むフラグを立てる
 		}
 
-		//制限時間減少フラグがtrueなら
-		if (isMinusTime)
+		if (isNextClear)	//クリアシーンに進むフラグがtrueなら
 		{
-			TimeLimit--;	//制限時間を減らす
-			LoopCount = 0;	//ループカウントをリセット
-			isMinusTime = false;	//制限時間減少フラグを折る
-		}
-	}
-
-	//制限時間がなくなったら
-	if (TimeLimit <= 0)
-	{
-		//ループカウントが4より小さいなら
-		if (LoopCount < 4)
-		{
-			//フレームカウントを増やす
-			FrameCount++;
-
-			//フレームカウントが一定の値を超えたら
-			if (FrameCount > FRAME_RATE / 2)
-			{
-				LoopCount++;	//ループカウントを増やす
-				FrameCount = 0;	//フレームカウントをリセット
-			}
-		}
-
-		//ループカウントが4以上になったら
-		else if (LoopCount >= 4)
-		{
-			//クリアシーンに進むフラグを立てる
-			isNextClear = true;
-		}
-
-		//クリアシーンに進むフラグがtrueなら
-		if (isNextClear)
-		{
-			//プレイシーン後処理へ移動
-			g_CurrentSceneID = SCENE_ID_FIN_PLAY;
+			g_CurrentSceneID = SCENE_ID_FIN_PLAY;	//プレイシーン後処理へ移動
 		}
 	}
 }
 
-//プレイシーン描画処理
-void DrawPlay()
+void DrawPlay()	//プレイシーン描画処理
 {
-	//制限時間描画
-	DrawFormatString(600, 60, GetColor(255, 255, 255), "Time:%d", TimeLimit);
+	DrawFormatString(600, 60, GetColor(255, 255, 255), "Time:%d", TimeLimit);	//制限時間描画
+
+	text.DrawTextImage();	//文字描画処理
 }
 
 //プレイシーン後処理
 void FinPlay()
 {
-	//クリアシーンへ移動
-	g_CurrentSceneID = SCENE_ID_INIT_CLEAR;
+	text.FinText();	//文字後処理
+
+	g_CurrentSceneID = SCENE_ID_INIT_CLEAR;	//クリアシーンへ移動
 }

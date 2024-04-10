@@ -2,35 +2,28 @@
 #include "Scene.h"
 #include "SceneGameOver.h"
 
-//ゲームオーバー初期化
-void InitGameOver()
+void InitGameOver()	//ゲームオーバー初期化
 {
-	//ゲームオーバーループへ移動
-	g_CurrentSceneID = SCENE_ID_LOOP_GAMEOVER;
+	g_CurrentSceneID = SCENE_ID_LOOP_GAMEOVER;	//ゲームオーバーループへ移動
 }
 
-//ゲームオーバー通常処理
-void StepGameOver()
+void StepGameOver()	//ゲームオーバー通常処理
 {
-	if (IsKeyPush(KEY_INPUT_RETURN))
+	if (IsKeyPush(KEY_INPUT_RETURN))	//エンターキーを押すと
 	{
-		g_CurrentSceneID = SCENE_ID_FIN_GAMEOVER;
+		g_CurrentSceneID = SCENE_ID_FIN_GAMEOVER;	//ゲームオーバー後処理へ移動
 	}
 }
 
-//ゲームオーバー描画処理
-void DrawGameOver()
+void DrawGameOver()	//ゲームオーバー描画処理
 {
 
 }
 
-//ゲームオーバー後処理
-void FinGameOver()
+void FinGameOver()	//ゲームオーバー後処理
 {
-	//エンターキーで
-	if (IsKeyPush(KEY_INPUT_RETURN))
+	if (IsKeyPush(KEY_INPUT_RETURN))	//エンターキーを押すと
 	{
-		//プレイシーンに戻る
-		g_CurrentSceneID = SCENE_ID_INIT_PLAY;
+		g_CurrentSceneID = SCENE_ID_INIT_TITLE;	//タイトルシーンに戻る
 	}
 }

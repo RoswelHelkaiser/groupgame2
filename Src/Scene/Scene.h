@@ -22,5 +22,4 @@
 #define SCENE_ID_LOOP_GAMEOVER	(401)	//繰り返し
 #define SCENE_ID_FIN_GAMEOVER	(402)	//後処理
 
-//現在のシーンID
-extern int g_CurrentSceneID;
+extern int g_CurrentSceneID;	//現在のシーンID

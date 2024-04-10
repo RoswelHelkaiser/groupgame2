@@ -1,13 +1,9 @@
 #pragma once
 
-//ゲームオーバー初期化
-void InitGameOver();
+void InitGameOver();	//ゲームオーバー初期化
 
-//ゲームオーバー通常処理
-void StepGameOver();
+void StepGameOver();	//ゲームオーバー通常処理
 
-//ゲームオーバー描画処理
-void DrawGameOver();
+void DrawGameOver();	//ゲームオーバー描画処理
 
-//ゲームオーバー後処理
-void FinGameOver();
+void FinGameOver();		//ゲームオーバー後処理

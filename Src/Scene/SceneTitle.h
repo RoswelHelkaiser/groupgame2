@@ -1,15 +1,13 @@
 #pragma once
 
-#define BACK_PATH	("Data/TitleImage/BgTitle.png")	//タイトルの背景画像のパス
+#define BACK_PATH	("Data/TitleImage/BgTitle.png")		//タイトルの背景画像のパス
+#define TITLE_PATH	("Data/TitleImage/TitleText.png")	//タイトル文字画像のパス
+#define START_PATH	("Data/TitleImage/Start.png")		//スタート文字画像のパス
 
-//タイトル初期化
-void InitTitle();
+void InitTitle();	//タイトル初期化
 
-//タイトル通常処理
-void StepTitle();
+void StepTitle();	//タイトル通常処理
 
-//タイトル描画処理
-void DrawTitle();
+void DrawTitle();	//タイトル描画処理
 
-//タイトル後処理
-void FinTitle();
+void FinTitle();	//タイトル後処理

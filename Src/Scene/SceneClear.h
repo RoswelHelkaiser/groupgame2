@@ -1,16 +1,15 @@
 #pragma once
 
-#define BACK_CLEAR	("Data/ClearImage/BgClear.png")	//クリアの背景画像のパス
-#define RESULT_PATH	("Data/ClearImage/Result.png")	//リザルト文字のパス
+#define BACK_CLEAR		("Data/ClearImage/BgClear.png")		//クリアの背景画像のパス
+#define RESULT_PATH		("Data/ClearImage/Result.png")		//リザルト文字のパス
+#define TEXT_PATH		("Data/ClearImage/Text.png")		//「まだやる？」のパス
+#define CONTINUE_PATH	("Data/ClearImage/Continue.png")	//「もっかい！」のパス
+#define BACK_TITLE_PATH	("Data/ClearImage/BackTitle.png")	//「もういいかな。」のパス	
 
-//クリア初期化
-void InitClear();
+void InitClear();	//クリア初期化
 
-//クリア通常処理
-void StepClear();
+void StepClear();	//クリア通常処理
 
-//クリア描画処理
-void DrawClear();
+void DrawClear();	//クリア描画処理
 
-//クリア後処理
-void FinClear();
+void FinClear();	//クリア後処理
