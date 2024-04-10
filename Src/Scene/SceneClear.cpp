@@ -42,11 +42,11 @@ void DrawClear()	//クリア描画処理
 
 	DrawRotaGraph(640, 100, 1.0f, 0.0f, ResultImage, true);	//リザルト文字画像描画
 
-	DrawRotaGraph(640, 350, 1.0f, 0.0f, TextImage, true);	//「まだやる？」画像描画
+	DrawRotaGraph(640, 300, 1.0f, 0.0f, TextImage, true);	//「まだやる？」画像描画
 
 	DrawRotaGraph(640, 450, 1.0f, 0.0f, ContinueImage, true);	//「もっかい！」画像描画
 
-	DrawRotaGraph(640, 600, 1.0f, 0.0f, BackTitleImage, true);	//「もういいかな。」画像描画
+	DrawRotaGraph(660, 600, 1.0f, 0.0f, BackTitleImage, true);	//「もういいかな。」画像描画
 }
 
 void FinClear()	//クリア後処理
