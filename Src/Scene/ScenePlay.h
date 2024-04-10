@@ -1,17 +1,20 @@
 #pragma once
 
-#define TIME_MAX_NUM	(10)	//制限時間のマックス
+#define TIME_MAX_NUM	(60)	//制限時間のマックス
 
-#define READY_PATH	("Data/PlayImage/Ready.png")	//「Ready?」のパス
-#define GO_PATH		("Data/PlayImage/Go.png")		//「Go!」のパス
-#define FINISH_PATH	("Data/PlayImage/Finish.png")	//「Finish!」のパス
+#define READY_PATH	("Data/PlayImage/Text/Ready.png")	//「Ready?」のパス
+#define GO_PATH		("Data/PlayImage/Text/Go.png")		//「Go!」のパス
+#define FINISH_PATH	("Data/PlayImage/Text/Finish.png")	//「Finish!」のパス
 #define TEXT_NUM	(3)	//文字の数
+
+#define SLIME_PATH	("Data/PlayImage/Slime.png")		//スライム(緑)のパス
+#define SLIME_NUM	(175)	//スライムの数
 
 //文字クラス
 class Text
 {
 	public:	//メンバ変数一覧
-		int TextHandle[3];	//画像ハンドル
+		int TextHandle[TEXT_NUM];	//画像ハンドル
 		int HandleIndex;	//画像ハンドル添え字用変数
 		float PosX, PosY;	//X座標,Y座標
 		float Size;			//画像の拡大率
@@ -98,6 +101,64 @@ class Text
 			for (int i = 0; i < TEXT_NUM; i++)
 			{
 				DeleteGraph(TextHandle[i]);	//画像破棄
+			}
+		}
+};
+
+//スライムクラス
+class Slime
+{
+public:	//メンバ変数一覧
+	int ImageHandle[SLIME_NUM];	//画像ハンドル
+		float PosX, PosY;		//X座標,Y座標
+		bool isDraw;			//描画フラグ
+		int FrameNum;			//フレームカウント用変数
+		int Wating;				//スポーン間隔用変数
+
+	public:	//メソッド一覧
+		Slime()	//コンストラクタ(全ての情報を初期化)
+		{
+			for (int i = 0; i < SLIME_NUM; i++)
+			{
+				ImageHandle[i] = 0;
+			}
+			PosX = 0.0f;
+			PosY = 0.0f;
+			isDraw = false;
+		}
+
+		void InitSlime()	//スライムの初期化
+		{
+			for (int i = 0; i < SLIME_NUM; i++)
+			{
+				ImageHandle[i] = LoadGraph(SLIME_PATH);	//スライム画像読み込み
+			}
+			PosX = 640.0f;	//初期X座標を設定
+			PosY = 360.0f;	//初期Y座標を設定
+			isDraw = false;	//描画フラグを折る
+		}
+
+		void StepSlime()	//スライム通常処理
+		{
+
+		}
+
+		void DrawSlime()	//スライム描画処理
+		{
+			if (isDraw)	//描画フラグがtrueなら
+			{
+				for (int i = 0; i < SLIME_NUM; i++)
+				{
+					DrawRotaGraph((int)PosX, (int)PosY, 1.0f, 0.0f, ImageHandle[i], true);	//スライム画像描画
+				}
+			}
+		}
+
+		void FinSlime()		//スライム後処理
+		{
+			for (int i = 0; i < SLIME_NUM; i++)
+			{
+				DeleteGraph(ImageHandle[i]);	//スライム画像破棄
 			}
 		}
 };

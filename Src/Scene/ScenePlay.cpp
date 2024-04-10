@@ -5,7 +5,9 @@
 #include "Scene.h"
 #include "ScenePlay.h"
 
-Text text;	//文字クラスの宣言
+Text text;		//文字クラスの宣言
+
+Slime slime;	//スライムクラスの宣言
 
 int FrameCount;	//フレームカウント用変数
 
@@ -20,6 +22,8 @@ bool isNextClear;	//クリアシーンに進むフラグ
 void InitPlay()	//プレイシーン初期化
 {
 	text.InitText();	//文字の初期化
+
+	slime.InitSlime();	//スライムの初期化
 
 	FrameCount = 0;		//フレームカウントをリセット
 
@@ -40,6 +44,8 @@ void StepPlay()	//プレイシーン通常処理
 
 	if (text.isStart)	//ゲームを進ませるフラグがtrueなら
 	{
+		slime.StepSlime();	//スライム通常処理
+
 		if (TimeLimit > 0)	//制限時間が残っていたら
 		{
 			if (LoopCount < 1)	//ループカウントが1より小さいなら
@@ -98,15 +104,19 @@ void StepPlay()	//プレイシーン通常処理
 
 void DrawPlay()	//プレイシーン描画処理
 {
-	DrawFormatString(600, 60, GetColor(255, 255, 255), "Time:%d", TimeLimit);	//制限時間描画
-
 	text.DrawTextImage();	//文字描画処理
+
+	slime.DrawSlime();	//スライム描画処理
+
+	DrawFormatString(600, 60, GetColor(255, 255, 255), "Time:%d", TimeLimit);	//制限時間描画処理
 }
 
 //プレイシーン後処理
 void FinPlay()
 {
 	text.FinText();	//文字後処理
+
+	slime.FinSlime();	//スライム後処理
 
 	g_CurrentSceneID = SCENE_ID_INIT_CLEAR;	//クリアシーンへ移動
 }
