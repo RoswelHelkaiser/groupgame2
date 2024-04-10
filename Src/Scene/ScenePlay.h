@@ -2,6 +2,7 @@
 
 #define TIME_MAX_NUM	(10)	//制限時間のマックス
 
+#define BACK_PLAY_PATH	("Data/PlayImage/BgPlay.png")	//プレイ背景画像のパス
 #define READY_PATH	("Data/PlayImage/Text/Ready.png")	//「Ready?」のパス
 #define GO_PATH		("Data/PlayImage/Text/Go.png")		//「Go!」のパス
 #define FINISH_PATH	("Data/PlayImage/Text/Finish.png")	//「Finish!」のパス

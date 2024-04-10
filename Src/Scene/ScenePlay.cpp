@@ -6,6 +6,8 @@
 #include "ScenePlay.h"
 #include "../Slime/Slime.h"
 
+int BackPlayImage;	//プレイ背景画像ハンドル
+
 Text text;		//文字クラスの宣言
 
 int FrameCount;	//フレームカウント用変数
@@ -20,6 +22,8 @@ bool isNextClear;	//クリアシーンに進むフラグ
 
 void InitPlay()	//プレイシーン初期化
 {
+	BackPlayImage = LoadGraph(BACK_PLAY_PATH);	//プレイ背景画像読み込み
+
 	text.InitText();	//文字の初期化
 
 	InitSlime();	//スライムの初期化
@@ -66,7 +70,6 @@ void StepPlay()	//プレイシーン通常処理
 			if (isMinusTime)	//制限時間減少フラグがtrueなら
 			{
 				TimeLimit--;	//制限時間を減らす
-				SpornSlime();
 				LoopCount = 0;	//ループカウントをリセット
 				isMinusTime = false;	//制限時間減少フラグを折る
 			}
@@ -104,6 +107,8 @@ void StepPlay()	//プレイシーン通常処理
 
 void DrawPlay()	//プレイシーン描画処理
 {
+	DrawGraph(0, 0, BackPlayImage, true);	//プレイ背景画像描画
+
 	text.DrawTextImage();	//文字描画処理
 
 	DrawSlime();	//スライム描画処理
@@ -114,6 +119,8 @@ void DrawPlay()	//プレイシーン描画処理
 //プレイシーン後処理
 void FinPlay()
 {
+	DeleteGraph(BackPlayImage);	//プレイ背景画像破棄
+
 	text.FinText();	//文字後処理
 
 	FinSlime();	//スライム後処理

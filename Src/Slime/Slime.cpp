@@ -10,7 +10,7 @@ int KindIndex;		//スライムの種類用変数
 
 int FrameNum;	//フレームカウント用変数
 
-int Wating;		//ループカウント用変数
+int Waiting;		//ループカウント用変数
 
 void InitSlime()	//スライムの初期化
 {
@@ -32,25 +32,12 @@ void InitSlime()	//スライムの初期化
 
 	FrameNum = 0;	//フレームカウントをリセット
 
-	Wating = 0;		//ループカウントをリセット
+	Waiting = 0;		//ループカウントをリセット
 }
 
 void StepSlime()	//スライム通常処理
 {
-	//if (Wating < 1)	//ループカウントが1より小さいなら
-	//{
-	//	FrameNum++;	//フレームカウントを増やす
-
-	//	if (FrameNum > FRAME_RATE)	//フレームカウントが一定の値を超えたら
-	//	{
-	//		Wating++;	//ループカウントを増やす
-	//		FrameNum = 0;	//フレームカウントをリセット
-	//	}
-	//}
-
-	//else if (Wating >= 1)	//ループカウントが1以上になったら
-	//{
-	//}
+	
 }
 
 void DrawSlime()	//スライム描画処理
@@ -76,7 +63,7 @@ void FinSlime()		//スライム後処理
 
 void SpornSlime()	//スライムスポーン処理
 {
-	GetRand(1);		//スライムの種類をランダムに決める
+	KindIndex = GetRand(1);		//スライムの種類をランダムに決める
 	slimeInfo[HandleIndex][KindIndex].isDraw = true;	//描画フラグを立てる
 	HandleIndex++;	//次のスライムにする
 }
