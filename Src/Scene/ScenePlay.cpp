@@ -5,6 +5,7 @@
 #include "Scene.h"
 #include "ScenePlay.h"
 #include "../Slime/Slime.h"
+#include "../SlimeBox/SlimeBox.h"
 
 int BackPlayImage;	//プレイ背景画像ハンドル
 
@@ -27,6 +28,8 @@ void InitPlay()	//プレイシーン初期化
 	text.InitText();	//文字の初期化
 
 	InitSlime();	//スライムの初期化
+
+	InitBox();	//箱の初期化
 
 	FrameCount = 0;		//フレームカウントをリセット
 
@@ -69,6 +72,7 @@ void StepPlay()	//プレイシーン通常処理
 
 			if (isMinusTime)	//制限時間減少フラグがtrueなら
 			{
+				SpornSlime();
 				TimeLimit--;	//制限時間を減らす
 				LoopCount = 0;	//ループカウントをリセット
 				isMinusTime = false;	//制限時間減少フラグを折る
@@ -109,9 +113,11 @@ void DrawPlay()	//プレイシーン描画処理
 {
 	DrawGraph(0, 0, BackPlayImage, true);	//プレイ背景画像描画
 
-	text.DrawTextImage();	//文字描画処理
+	DrawBox();	//箱描画処理
 
 	DrawSlime();	//スライム描画処理
+
+	text.DrawTextImage();	//文字描画処理
 
 	DrawFormatString(600, 60, GetColor(255, 255, 255), "Time:%d", TimeLimit);	//制限時間描画処理
 }
@@ -124,6 +130,8 @@ void FinPlay()
 	text.FinText();	//文字後処理
 
 	FinSlime();	//スライム後処理
+
+	FinBox();	//箱後処理
 
 	g_CurrentSceneID = SCENE_ID_INIT_CLEAR;	//クリアシーンへ移動
 }

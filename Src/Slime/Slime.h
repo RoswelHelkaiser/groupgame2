@@ -7,7 +7,8 @@
 
 struct SlimeInfo	//スライム情報構造体
 {
-	int ImageHandle;	//画像ハンドル
+	int ImageHandle[SLIME_KIND];	//画像ハンドル
+	int KindIndex;		//スライムの種類用変数
 	float PosX, PosY;	//X座標,Y座標
 	bool isDraw;		//描画フラグ
 };
@@ -21,3 +22,5 @@ void DrawSlime();	//スライム描画処理
 void FinSlime();	//スライム後処理
 
 void SpornSlime();	//スライムスポーン処理
+
+SlimeInfo* GetSlimeInfo();	//スライム情報取得

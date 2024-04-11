@@ -38,7 +38,7 @@ int g_CurrentSceneID = SCENE_ID_INIT_TITLE;
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	//ウィンドウの状態を設定する
-	ChangeWindowMode(true);
+	ChangeWindowMode(false);
 
 	//DXライブラリの初期化
 	if (DxLib_Init() == -1) {
@@ -97,6 +97,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 			//入力ステップ
 			StepInput();
+
+			//マウスカーソルを表示状態にする
+			SetMouseDispFlag(true);
 
 			//-----------------------------------------
 			//ここからゲームの本体を書くことになる
