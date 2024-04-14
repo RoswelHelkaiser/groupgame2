@@ -6,6 +6,7 @@
 #include "ScenePlay.h"
 #include "../Slime/Slime.h"
 #include "../SlimeBox/SlimeBox.h"
+#include "../Score/Score.h"
 
 int BackPlayImage;	//プレイ背景画像ハンドル
 
@@ -30,6 +31,8 @@ void InitPlay()	//プレイシーン初期化
 	InitSlime();	//スライムの初期化
 
 	InitBox();	//箱の初期化
+
+	InitScore();	//スコアの初期化
 
 	FrameCount = 0;		//フレームカウントをリセット
 
@@ -72,7 +75,42 @@ void StepPlay()	//プレイシーン通常処理
 
 			if (isMinusTime)	//制限時間減少フラグがtrueなら
 			{
-				SpornSlime();
+				if (48 <= TimeLimit)	//制限時間が48秒以上なら
+				{
+					//スライムを1匹スポーン
+					SpornSlime();	//スライムスポーン処理
+				}
+				else if (36 <= TimeLimit && TimeLimit <= 47)	//制限時間が36秒以上47秒以下なら
+				{
+					//スライムを2匹スポーン
+					SpornSlime();	//スライムスポーン処理
+					SpornSlime();	//スライムスポーン処理
+				}
+				else if (24 <= TimeLimit && TimeLimit <= 35)	//制限時間が24秒以上35秒以下なら
+				{
+					//スライムを3匹スポーン
+					SpornSlime();	//スライムスポーン処理
+					SpornSlime();	//スライムスポーン処理
+					SpornSlime();	//スライムスポーン処理
+				}
+				else if (12 <= TimeLimit && TimeLimit <= 23)	//制限時間が12秒以上23秒以下なら
+				{
+					//スライムを4匹スポーン
+					SpornSlime();	//スライムスポーン処理
+					SpornSlime();	//スライムスポーン処理
+					SpornSlime();	//スライムスポーン処理
+					SpornSlime();	//スライムスポーン処理
+				}
+				else if (1 <= TimeLimit && TimeLimit <= 11)		//制限時間が1秒以上11秒以下なら
+				{
+					//スライムを5匹スポーン
+					SpornSlime();	//スライムスポーン処理
+					SpornSlime();	//スライムスポーン処理
+					SpornSlime();	//スライムスポーン処理
+					SpornSlime();	//スライムスポーン処理
+					SpornSlime();	//スライムスポーン処理
+				}
+
 				TimeLimit--;	//制限時間を減らす
 				LoopCount = 0;	//ループカウントをリセット
 				isMinusTime = false;	//制限時間減少フラグを折る
@@ -119,6 +157,8 @@ void DrawPlay()	//プレイシーン描画処理
 
 	text.DrawTextImage();	//文字描画処理
 
+	DrawScore();	//スコア描画処理
+
 	DrawFormatString(600, 60, GetColor(255, 255, 255), "Time:%d", TimeLimit);	//制限時間描画処理
 }
 
@@ -132,6 +172,8 @@ void FinPlay()
 	FinSlime();	//スライム後処理
 
 	FinBox();	//箱後処理
+
+	FinScore();	//スコア後処理
 
 	g_CurrentSceneID = SCENE_ID_INIT_CLEAR;	//クリアシーンへ移動
 }
