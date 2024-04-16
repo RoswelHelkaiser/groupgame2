@@ -43,6 +43,8 @@ struct ScoreInfo	//スコア情報構造体
 
 void InitScore();	//スコアの初期化
 
+void StepScore();	//スコア通常処理
+
 void DrawScore();	//スコア描画処理
 
 void FinScore();	//スコア後処理

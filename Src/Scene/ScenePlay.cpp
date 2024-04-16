@@ -22,6 +22,10 @@ bool isMinusTime;	//制限時間を減らすフラグ
 
 bool isNextClear;	//クリアシーンに進むフラグ
 
+int Play_BGM;	//BGMハンドル
+
+int Sound[2];	//効果音ハンドル
+
 void InitPlay()	//プレイシーン初期化
 {
 	BackPlayImage = LoadGraph(BACK_PLAY_PATH);	//プレイ背景画像読み込み
@@ -44,6 +48,17 @@ void InitPlay()	//プレイシーン初期化
 
 	isNextClear = false;	//クリアシーンに進むフラグを折る
 
+	Play_BGM = LoadSoundMem(PLAY_BGM_PATH);	//BGM読み込み
+
+	ChangeVolumeSoundMem(255 * 40 / 100, Play_BGM);	//BGMの音量を40%にする
+
+	PlaySoundMem(Play_BGM, DX_PLAYTYPE_LOOP, true);	//BGM再生
+
+	Sound[0] = LoadSoundMem(TIMER_SOUND_PATH);	//タイマー効果音読み込み
+	Sound[1] = LoadSoundMem(COUNTDOWN_PATH);	//カウントダウン効果音読み込み
+
+	PlaySoundMem(Sound[1], DX_PLAYTYPE_BACK, true);	//カウントダウン効果音再生
+
 	g_CurrentSceneID = SCENE_ID_LOOP_PLAY;	//プレイシーンループへ
 }
 
@@ -51,9 +66,14 @@ void StepPlay()	//プレイシーン通常処理
 {
 	text.StepText();	//文字通常処理
 
+	StepScore();	//スコア通常処理
+
+	StepSlime();	//スライム通常処理
+
 	if (text.isStart)	//ゲームを進ませるフラグがtrueなら
 	{
-		StepSlime();	//スライム通常処理
+		JudgeGreenSlime();	//スライム(緑)の仕分けが合っているか判断
+		JudgeRedSlime();	//スライム(赤)の仕分けが合っているか判断
 
 		if (TimeLimit > 0)	//制限時間が残っていたら
 		{
@@ -88,6 +108,7 @@ void StepPlay()	//プレイシーン通常処理
 				}
 				else if (24 <= TimeLimit && TimeLimit <= 35)	//制限時間が24秒以上35秒以下なら
 				{
+				
 					//スライムを3匹スポーン
 					SpornSlime();	//スライムスポーン処理
 					SpornSlime();	//スライムスポーン処理
@@ -95,6 +116,7 @@ void StepPlay()	//プレイシーン通常処理
 				}
 				else if (12 <= TimeLimit && TimeLimit <= 23)	//制限時間が12秒以上23秒以下なら
 				{
+					
 					//スライムを4匹スポーン
 					SpornSlime();	//スライムスポーン処理
 					SpornSlime();	//スライムスポーン処理
@@ -116,10 +138,16 @@ void StepPlay()	//プレイシーン通常処理
 				isMinusTime = false;	//制限時間減少フラグを折る
 			}
 		}
-	}	
+	}
+
+	if (TimeLimit == 11)
+	{
+		PlaySoundMem(Sound[0], DX_PLAYTYPE_BACK, true);	//タイマー効果音再生
+	}
 
 	if (TimeLimit <= 0)	//制限時間がなくなったら
 	{
+		StopSoundMem(Play_BGM);	//BGM停止
 		text.HandleIndex = 2;	//「Finish!」にする
 		text.isDraw = true;		//描画フラグを立てる
 		text.Size = 3.0f;		//大きさを3倍にする
@@ -174,6 +202,13 @@ void FinPlay()
 	FinBox();	//箱後処理
 
 	FinScore();	//スコア後処理
+
+	DeleteSoundMem(Play_BGM);	//BGM破棄
+
+	for (int i = 0; i < 2; i++)
+	{
+		DeleteSoundMem(Sound[i]);	//効果音破棄
+	}
 
 	g_CurrentSceneID = SCENE_ID_INIT_CLEAR;	//クリアシーンへ移動
 }

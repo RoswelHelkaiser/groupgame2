@@ -1,4 +1,5 @@
 #include "DxLib.h"
+#include "../Collision/Collision.h"
 #include "../Common.h"
 #include "../Input/Input.h"
 #include "Slime.h"
@@ -14,6 +15,18 @@ int HandleIndex;	//画像ハンドル添え字用変数
 int ColorType;	//スライムの色
 
 int MouseX, MouseY;	//マウスカーソルのX座標,Y座標
+
+int ScorePosX,ScorePosY;	//スコア数字Y座標
+
+int CountFrame;		//フレームカウント用変数
+
+int GetScoreHandle[6];	//スコア数字画像ハンドル
+
+int GetScoreIndex;	//スコア数字添え字用変数
+
+bool isGetScoreDraw;	//スコア数字描画フラグ
+
+int SoundHandle[2];	//効果音ハンドル
 
 void InitSlime()	//スライムの初期化
 {
@@ -38,7 +51,7 @@ void InitSlime()	//スライムの初期化
 	{
 		green->KindIndex = 0;	//添え字をリセット
 		green->PosX = 640.0f;	//初期X座標を設定
-		green->PosY = 360.0f;	//初期Y座標を設定
+		green->PosY = 150.0f;	//初期Y座標を設定
 		green->isDraw = false;	//描画フラグを折る
 		green->AnimeFrame = 0;	//アニメフレームをリセット
 		green->isGoal = false;	//ゴール到達フラグを折る
@@ -48,7 +61,7 @@ void InitSlime()	//スライムの初期化
 	{
 		red->KindIndex = 0;		//添え字をリセット
 		red->PosX = 640.0f;		//初期X座標を設定
-		red->PosY = 360.0f;		//初期Y座標を設定
+		red->PosY = 150.0f;		//初期Y座標を設定
 		red->isDraw = false;	//描画フラグを折る
 		red->AnimeFrame = 0;	//アニメフレームをリセット
 		red->isGoal = false;	//ゴール到達フラグを折る
@@ -57,6 +70,19 @@ void InitSlime()	//スライムの初期化
 	HandleIndex = 0;	//添え字を0にリセット
 
 	ColorType = 0;	//0なら緑,1なら赤
+
+	GetScoreHandle[0] = LoadGraph(PLUS_1_PATH);	 //「+1」画像読み込み
+	GetScoreHandle[1] = LoadGraph(PLUS_2_PATH);	 //「+2」画像読み込み
+	GetScoreHandle[2] = LoadGraph(PLUS_3_PATH);	 //「+3」画像読み込み
+	GetScoreHandle[3] = LoadGraph(PLUS_4_PATH);	 //「+4」画像読み込み
+	GetScoreHandle[4] = LoadGraph(PLUS_5_PATH);	 //「+5」画像読み込み
+	GetScoreHandle[5] = LoadGraph(MINUS_3_PATH); //「-3」画像読み込み
+
+	ScorePosX = 0;		//X座標を設定
+	ScorePosY = 450;	//Y座標を設定
+
+	SoundHandle[0] = LoadSoundMem(CORRECT_SOUND_PATH);	//正解効果音読み込み
+	SoundHandle[1] = LoadSoundMem(WRONG_SOUND_PATH);	//不正解効果音読み込み
 }
 
 void StepSlime()	//スライム通常処理
@@ -69,11 +95,13 @@ void StepSlime()	//スライム通常処理
 
 	for (int i = 0; i < SLIME_NUM; i++, green++)
 	{
+		green->PosY += SLIME_SPEED;	//Y座標を下に動かす
+
 		if ((GetMouseInput() & MOUSE_INPUT_LEFT) != 0)	//マウスの左ボタンが押されているなら
 		{
-			if (green->PosX - 45.0f < MouseX && MouseX < green->PosX + 45.0f)	//X軸方向でカーソルがスライムと当たっているなら
+			if (green->PosX - 50.0f < MouseX && MouseX < green->PosX + 50.0f)	//X軸方向でカーソルがスライムと当たっているなら
 			{
-				if (green->PosY - 45.0f < MouseY && MouseY < green->PosY + 45.0f)	//Y軸方向でカーソルがスライムと当たっているなら
+				if (green->PosY - 50.0f < MouseY && MouseY < green->PosY + 50.0f)	//Y軸方向でカーソルがスライムと当たっているなら
 				{
 					green->PosX = (float)MouseX;	//X座標をカーソルに合わせる
 					green->PosY = (float)MouseY;	//Y座標をカーソルに合わせる
@@ -81,14 +109,17 @@ void StepSlime()	//スライム通常処理
 			}
 		}
 	}
+	
 
 	for (int i = 0; i < SLIME_NUM; i++, red++)
 	{
+		red->PosY += SLIME_SPEED;	//Y座標を下に動かす
+
 		if ((GetMouseInput() & MOUSE_INPUT_LEFT) != 0)	//マウスの左ボタンが押されているなら
 		{
-			if (red->PosX - 45.0f < MouseX && MouseX < red->PosX + 45.0f)	//X軸方向でカーソルがスライムと当たっているなら
+			if (red->PosX - 50.0f < MouseX && MouseX < red->PosX + 50.0f)	//X軸方向でカーソルがスライムと当たっているなら
 			{
-				if (red->PosY - 45.0f < MouseY && MouseY < red->PosY + 45.0f)	//Y軸方向でカーソルがスライムと当たっているなら
+				if (red->PosY - 50.0f < MouseY && MouseY < red->PosY + 50.0f)	//Y軸方向でカーソルがスライムと当たっているなら
 				{
 					red->PosX = (float)MouseX;	//X座標をカーソルに合わせる
 					red->PosY = (float)MouseY;	//Y座標をカーソルに合わせる
@@ -119,6 +150,22 @@ void DrawSlime()	//スライム描画処理
 						  1.0f, 0.0f, redslimeInfo[HandleIndex].ImageHandle[red->KindIndex], true);	//スライム画像描画
 		}
 	}
+
+	if (isGetScoreDraw)	//スコア数字描画フラグがtrueなら
+	{
+		DrawRotaGraph(ScorePosX, ScorePosY, 1.0f, 0.0f, GetScoreHandle[GetScoreIndex], true);	//スコア数字描画
+		ScorePosY -= 5;	//Y座標を上に移動
+		CountFrame++;	//フレームカウントを増やす
+	}
+
+	if (CountFrame >= FRAME_RATE / 2)	//フレームカウントが一定の値に達したら
+	{
+		isGetScoreDraw = false;	//スコア数字描画フラグを折る
+		ScorePosY = 450;	//Y座標を元に戻す
+		CountFrame = 0;	//フレームカウントをリセット
+	}
+
+	DrawFormatString(0, 0, GetColor(255, 255, 255), "%d", ColorType);
 }
 
 void FinSlime()		//スライム後処理
@@ -139,6 +186,16 @@ void FinSlime()		//スライム後処理
 		{
 			DeleteGraph(red->ImageHandle[j]);	//スライム(赤)画像破棄
 		}
+	}
+
+	for (int i = 0; i < 6; i++)
+	{
+		DeleteGraph(GetScoreHandle[i]);	//スコア数字画像破棄
+	}
+
+	for (int i = 0; i < 2; i++)
+	{
+		DeleteSoundMem(SoundHandle[i]);	//効果音破棄
 	}
 }
 
@@ -167,17 +224,19 @@ void SpornSlime()	//スライムスポーン処理
 	{
 		case 0:	//緑なら
 		{
-			greenslimeInfo[HandleIndex].PosX = GetRand(400) + 400.0f;	//X座標をランダムにセット
-			greenslimeInfo[HandleIndex].PosY = GetRand(400) + 200.0f;	//Y座標をランダムにセット
+			greenslimeInfo[HandleIndex].PosX = GetRand(200) + 500.0f;	//X座標をランダムにセット
+			greenslimeInfo[HandleIndex].PosY = 150.0f;	//Y座標をセット
 			greenslimeInfo[HandleIndex].isDraw = true;	//描画フラグを立てる
+			redslimeInfo[HandleIndex].isDraw = false;	//描画フラグを折る
 		}
 		break;
 
 		case 1:	//赤なら
 		{
-			redslimeInfo[HandleIndex].PosX = GetRand(400) + 400.0f;	//X座標をランダムにセット
-			redslimeInfo[HandleIndex].PosY = GetRand(400) + 200.0f;	//Y座標をランダムにセット
+			redslimeInfo[HandleIndex].PosX = GetRand(200) + 500.0f;	//X座標をランダムにセット
+			redslimeInfo[HandleIndex].PosY = 150.0f;	//Y座標をセット
 			redslimeInfo[HandleIndex].isDraw = true;	//描画フラグを立てる
+			greenslimeInfo[HandleIndex].isDraw = false;	//描画フラグを折る
 		}
 		break;
 	}
@@ -226,73 +285,125 @@ void ChangeSlime()	//スライムのアニメーション処理
 	}
 }
 
-void JudgeSlime()	//仕分けが合っているか判断
+void JudgeGreenSlime()	//スライム(緑)の仕分けが合っているか判断
 {
 	BoxInfo* boxInfo = GetBoxInfo();	//箱情報取得
 	ScoreInfo* scoreInfo = GetScoreInfo();	//スコア情報取得
-	switch (ColorType)	//色で場合分け
-	{
-		case 0:	//緑なら
-		{
-			SlimeInfo* green = greenslimeInfo;	//スライム(緑)情報取得
-			for (int i = 0; i < SLIME_NUM; i++, green++)
-			{
-				if ((GetMouseInput() & MOUSE_INPUT_LEFT) == 0)	//マウスの左ボタンが離されたら
-				{
-					if (green->PosX < boxInfo[0].PosX - 200.0f && boxInfo[0].PosX + 200.0f < green->PosX)	//X軸方向に緑の箱とスライム(緑)が当たっているなら
-					{
-						if (green->PosY < boxInfo[0].PosY - 150.0f && boxInfo[0].PosX + 200.0f < green->PosY)	//Y軸方向に緑の箱とスライム(緑)が当たっているなら
-						{
-							scoreInfo->CurrentScore += scoreInfo->ChainBonus;	//スコアを加算
-							scoreInfo->ChainBonus++;	//ボーナスを加算
-							green->isGoal = true;	//ゴール到達フラグを立てる
-							green->isDraw = false;	//描画フラグを折る
-						}
-					}
-					else if (green->PosX < boxInfo[1].PosX - 200.0f && boxInfo[1].PosX + 200.0f < green->PosX)	//X軸方向に赤の箱とスライム(緑)が当たっているなら
-					{
-						if (green->PosY < boxInfo[1].PosY - 150.0f && boxInfo[1].PosX + 200.0f < green->PosY)	//Y軸方向に赤の箱とスライム(緑)が当たっているなら
-						{
-							scoreInfo->CurrentScore -= scoreInfo->Minus;	//スコアを減算
-							green->isGoal = true;	//ゴール到達フラグを立てる
-							green->isDraw = false;	//描画フラグを折る
-						}
-					}
-				}
-			}
-		}
-		break;
+	SlimeInfo* green = greenslimeInfo;	//スライム(緑)情報取得
+	SlimeInfo* red = redslimeInfo;	//スライム(赤)情報取得
+	for (int i = 0; i < SLIME_NUM; i++, green++)
+	{		
+		//円形の当たり判定用データを用意
+		float Ax = green->PosX;
+		float Ay = green->PosY;
+		int Ar = 32;
 
-		case 1:	//赤なら
+		float Bx = boxInfo[0].PosX;
+		float By = boxInfo[0].PosY;
+		float B2x = boxInfo[1].PosX;
+		float B2y = boxInfo[1].PosY;
+		int Br = 200;
+
+		if (IsHitCircle((int)Ax, (int)Ay, Ar, (int)Bx, (int)By, Br))	//緑の箱とスライム(緑)が当たっているなら
 		{
-			SlimeInfo* red = redslimeInfo;	//スライム(赤)情報取得
-			for (int i = 0; i < SLIME_NUM; i++, red++)
+			if (!green->isGoal)	//ゴール到達フラグがfalseなら
 			{
-				if ((GetMouseInput() & MOUSE_INPUT_LEFT) == 0)	//マウスの左ボタンが離されたら
+				if ((GetMouseInput() & MOUSE_INPUT_LEFT) != 0)	//マウスの左ボタンが押されているなら
 				{
-					if (red->PosX < boxInfo[0].PosX - 200.0f && boxInfo[0].PosX + 200.0f < red->PosX)	//X軸方向に緑の箱とスライム(赤)が当たっているなら
+					PlaySoundMem(SoundHandle[0], DX_PLAYTYPE_BACK, true);	//正解効果音再生
+					scoreInfo->CurrentScore += scoreInfo->ChainBonus;	//スコアを加算
+					ScorePosX = 200;	//スコア数字X座標を設定
+					GetScoreIndex = scoreInfo->ChainBonus - 1;	//スコア数字の添え字を設定
+					if (GetScoreIndex >= 4)
 					{
-						if (red->PosY < boxInfo[0].PosY - 150.0f && boxInfo[0].PosX + 200.0f < red->PosY)	//Y軸方向に緑の箱とスライム(赤)が当たっているなら
-						{
-							scoreInfo->CurrentScore -= scoreInfo->Minus;	//スコアを減算
-							red->isGoal = true;	//ゴール到達フラグを立てる
-							red->isDraw = false;	//描画フラグを折る
-						}
+						GetScoreIndex = 4;
 					}
-					else if (red->PosX < boxInfo[1].PosX - 200.0f && boxInfo[1].PosX + 200.0f < red->PosX)	//X軸方向に赤の箱とスライム(赤)が当たっているなら
-					{
-						if (red->PosY < boxInfo[1].PosY - 150.0f && boxInfo[1].PosX + 200.0f < red->PosY)	//Y軸方向に赤の箱とスライム(赤)が当たっているなら
-						{
-							scoreInfo->CurrentScore += scoreInfo->ChainBonus;	//スコアを加算
-							scoreInfo->ChainBonus++;	//ボーナスを加算
-							red->isGoal = true;	//ゴール到達フラグを立てる
-							red->isDraw = false;	//描画フラグを折る
-						}
-					}
+					scoreInfo->ChainBonus++;	//ボーナスを加算
+					isGetScoreDraw = true;	//スコア数字の描画フラグを立てる
+					green->isGoal = true;	//ゴール到達フラグを立てる
+					green->isDraw = false;	//描画フラグを折る
 				}
 			}
 		}
-		break;
+
+		else if (IsHitCircle((int)Ax, (int)Ay, Ar, (int)B2x, (int)B2y, Br))	//赤の箱とスライム(緑)が当たっているなら
+		{
+			if (!green->isGoal)	//ゴール到達フラグがfalseなら
+			{
+				if ((GetMouseInput() & MOUSE_INPUT_LEFT) != 0)	//マウスの左ボタンが押されているなら
+				{
+					PlaySoundMem(SoundHandle[1], DX_PLAYTYPE_BACK, true);	//不正解効果音再生
+					scoreInfo->CurrentScore -= scoreInfo->Minus;	//スコアを減算
+					scoreInfo->ChainBonus = 1;	//ボーナスをリセット	
+					ScorePosX = 1080;	//スコア数字X座標を設定
+					GetScoreIndex = 5;		//スコア数字の添え字を設定
+					isGetScoreDraw = true;	//スコア数字の描画フラグを立てる
+					green->isGoal = true;	//ゴール到達フラグを立てる
+					green->isDraw = false;	//描画フラグを折る
+				}
+			}
+		}
+	}	
+}
+
+void JudgeRedSlime()	//スライム(赤)の仕分けが合っているか判断
+{
+	BoxInfo* boxInfo = GetBoxInfo();	//箱情報取得
+	ScoreInfo* scoreInfo = GetScoreInfo();	//スコア情報取得
+	SlimeInfo* red = redslimeInfo;	//スライム(赤)情報取得
+	SlimeInfo* green = greenslimeInfo;	//スライム(緑)情報取得
+	for (int i = 0; i < SLIME_NUM; i++, red++)
+	{	
+		//円形の当たり判定用データを用意
+		float Ax = red->PosX;
+		float Ay = red->PosY;
+		int Ar = 32;
+
+		float Bx = boxInfo[0].PosX;
+		float By = boxInfo[0].PosY;
+		float B2x = boxInfo[1].PosX;
+		float B2y = boxInfo[1].PosY;
+		int Br = 200;
+
+		if (IsHitCircle((int)Ax, (int)Ay, Ar, (int)Bx, (int)By, Br))	//緑の箱とスライム(赤)が当たっているなら
+		{
+			if (!red->isGoal)	//ゴール到達フラグがfalseなら
+			{
+				if ((GetMouseInput() & MOUSE_INPUT_LEFT) != 0)	//マウスの左ボタンが押されているなら
+				{
+					PlaySoundMem(SoundHandle[1], DX_PLAYTYPE_BACK, true);	//不正解効果音再生
+					scoreInfo->CurrentScore -= scoreInfo->Minus;	//スコアを減算
+					scoreInfo->ChainBonus = 1;	//ボーナスをリセット
+					ScorePosX = 200;	//スコア数字X座標を設定
+					GetScoreIndex = 5;		//スコア数字の添え字を設定
+					isGetScoreDraw = true;	//スコア数字の描画フラグを立てる
+					red->isGoal = true;	//ゴール到達フラグを立てる
+					red->isDraw = false;	//描画フラグを折る
+				}
+			}
+		}
+
+		else if (IsHitCircle((int)Ax, (int)Ay, Ar, (int)B2x, (int)B2y, Br))	//赤の箱とスライム(赤)が当たっているなら
+		{
+			if (!red->isGoal)	//ゴール到達フラグがfalseなら
+			{
+				if ((GetMouseInput() & MOUSE_INPUT_LEFT) != 0)	//マウスの左ボタンが押されているなら
+				{
+					PlaySoundMem(SoundHandle[0], DX_PLAYTYPE_BACK, true);	//正解効果音再生
+					scoreInfo->CurrentScore += scoreInfo->ChainBonus;	//スコアを加算
+					ScorePosX = 1080;	//スコア数字X座標を設定
+					GetScoreIndex = scoreInfo->ChainBonus - 1;	//スコア数字の添え字を設定
+					if (GetScoreIndex >= 4)
+					{
+						GetScoreIndex = 4;
+					}
+					scoreInfo->ChainBonus++;	//ボーナスを加算
+					isGetScoreDraw = true;	//スコア数字の描画フラグを立てる
+					red->isGoal = true;	//ゴール到達フラグを立てる
+					red->isDraw = false;	//描画フラグを折る
+				}
+			}
+		}		
 	}
 }
 

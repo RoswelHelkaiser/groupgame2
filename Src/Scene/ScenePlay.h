@@ -8,6 +8,10 @@
 #define FINISH_PATH	("Data/PlayImage/Text/Finish.png")	//「Finish!」のパス
 #define TEXT_NUM	(3)	//文字の数
 
+#define PLAY_BGM_PATH		("Data/Sound/Music/PlayScreen.mp3")	//BGMのパス
+#define TIMER_SOUND_PATH	("Data/Sound/SE/Timer.wav")		//タイマー効果音のパス
+#define COUNTDOWN_PATH		("Data/Sound/SE/CountDown.wav")	//カウントダウン効果音のパス
+
 //文字クラス
 class Text
 {

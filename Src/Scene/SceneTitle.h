@@ -1,8 +1,8 @@
 #pragma once
 
 #define BACK_PATH	("Data/TitleImage/BgTitle.png")	//タイトルの背景画像のパス
-#define TITLE_PATH	("Data/TitleImage/Title.png")	//タイトル文字画像のパス
-#define START_PATH	("Data/TitleImage/Start.png")	//スタート文字画像のパス
+
+#define START_BGM_PATH	("Data/Sound/Music/TitleScreen.mp3")	//BGMのパス
 
 void InitTitle();	//タイトル初期化
 

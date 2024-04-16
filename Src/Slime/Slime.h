@@ -2,6 +2,17 @@
 
 #define SLIME_NUM	(175)	//スライムのスポーン数
 #define SLIME_KIND	(2)		//スライムの種類
+#define SLIME_SPEED	(1.5f)	//スライムの移動スピード
+
+#define PLUS_1_PATH	 ("Data/PlayImage/Text/+1.png")	//「+1」画像のパス
+#define PLUS_2_PATH	 ("Data/PlayImage/Text/+2.png")	//「+2」画像のパス
+#define PLUS_3_PATH	 ("Data/PlayImage/Text/+3.png")	//「+3」画像のパス
+#define PLUS_4_PATH	 ("Data/PlayImage/Text/+4.png")	//「+4」画像のパス
+#define PLUS_5_PATH	 ("Data/PlayImage/Text/+5.png")	//「+5」画像のパス
+#define MINUS_3_PATH ("Data/PlayImage/Text/-3.png")	//「-3」画像のパス
+
+#define CORRECT_SOUND_PATH	("Data/Sound/SE/Correct.wav")	//正解効果音のパス
+#define WRONG_SOUND_PATH	("Data/Sound/SE/Wrong.wav")		//不正解効果音のパス
 
 enum GREEN_SLIME_IMAGE	//スライム(緑)画像の種類
 {
@@ -69,6 +80,8 @@ void SpornSlime();	//スライムスポーン処理
 
 void ChangeSlime();	//スライムのアニメーション処理
 
-void JudgeSlime();	//仕分けが合っているか判断
+void JudgeGreenSlime();	//スライム(緑)の仕分けが合っているか判断
+
+void JudgeRedSlime();	//スライム(赤)の仕分けが合っているか判断
 
 SlimeInfo* GetSlimeInfo();	//スライム情報取得
